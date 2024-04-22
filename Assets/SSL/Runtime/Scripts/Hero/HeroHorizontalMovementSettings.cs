@@ -8,5 +8,6 @@ using System;
 public class HeroHorizontalMovementSettings
 {
     public float acceleration = 20f;
+    public float deceleration = 1f;
     public float speedMax = 5f;
 }
