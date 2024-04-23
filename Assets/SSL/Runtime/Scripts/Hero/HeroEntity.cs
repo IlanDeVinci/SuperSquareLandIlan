@@ -33,6 +33,11 @@ public class HeroEntity : MonoBehaviour
     }
     private JumpState _jumpState = JumpState.NotJumping;
     private float _jumpTimer = 0f;
+    public bool isJumpImpulsing => _jumpState == JumpState.JumpImpulsion;
+    public bool isJumpMinDurationReached => _jumpTimer >= _jumpSettings.jumpMinDuration;
+
+    public bool isJumping => _jumpState != JumpState.NotJumping;
+
 
     [Header("Dash")]
     [SerializeField] private HeroDashSettings _dashSettings;
@@ -51,7 +56,11 @@ public class HeroEntity : MonoBehaviour
         _jumpState = JumpState.JumpImpulsion;
         _jumpTimer = 0f;
     }
-    public bool isJumping => _jumpState != JumpState.NotJumping;
+
+    public void StopJumpImpulsion()
+    {
+        _jumpState = JumpState.Falling;
+    }
 
     private void _UpdateJumpStateImpulsion()
     {
