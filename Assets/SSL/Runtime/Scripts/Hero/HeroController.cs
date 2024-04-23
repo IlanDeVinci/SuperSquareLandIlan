@@ -13,6 +13,16 @@ public class HeroController : MonoBehaviour
         _entity.SetMoveDirX(GetInputMoveX());
     }
 
+    private bool IsInputDash()
+    {
+        bool inputDash = false;
+        if(Input.GetKeyDown(KeyCode.E)) {
+            inputDash = true;
+        }
+        return inputDash;
+    }
+
+
     private float GetInputMoveX()
     {
         float inputMoveX = 0f;

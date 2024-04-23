@@ -11,6 +11,17 @@ public class HeroEntity : MonoBehaviour
     private float _horizontalSpeed = 0f;
     private float _moveDirX = 0f;
 
+    [Header("Vertical Movements")]
+    private float _verticalSpeed = 0f;
+
+    [Header("Fall")]
+    [SerializeField] private HeroFallSettings _fallSettings;
+
+    [Header("Dash")]
+    [SerializeField] private HeroDashSettings _dashSettings;
+    private float _dashSpeed = 0f;
+    private float _dashDuration = 0f;
+
     [Header("Orientation")]
     [SerializeField] private Transform _orientVisualRoot;
     private float _orientX = 1f;
@@ -60,11 +71,19 @@ public class HeroEntity : MonoBehaviour
             _Decelerate();
         }
     }
+
+    #region Functions Move Dir
+
+    public float GetMoveDirX()
+    {
+        return _moveDirX;
+    }
     public void SetMoveDirX(float dirX)
     {
         _moveDirX = dirX;
     }
 
+    #endregion
     private void _ApplyHorizontalSpeed()
     {
         Vector2 velocity = _rigidbody.velocity;
@@ -84,9 +103,29 @@ public class HeroEntity : MonoBehaviour
             _ChangeOrientFromHorizontalMovement();
         }
 
+        _ApplyFallGravity();
         _ApplyHorizontalSpeed();
+        _ApplyVerticalSpeed();
 
     }
+
+    private void _ApplyFallGravity()
+    {
+        _verticalSpeed -= _fallSettings.fallGravity * Time.fixedDeltaTime;
+        if (_verticalSpeed < -_fallSettings.fallSpeedMax)
+        {
+            _verticalSpeed = -_fallSettings.fallSpeedMax;
+        }
+    }
+
+    private void _ApplyVerticalSpeed()
+    {
+        Vector2 velocity = _rigidbody.velocity;
+        velocity.y = _verticalSpeed;
+        _rigidbody.velocity = velocity;
+    }
+
+
 
 
     private void Update()
@@ -113,7 +152,10 @@ public class HeroEntity : MonoBehaviour
         GUILayout.BeginVertical(GUI.skin.box);
         GUILayout.Label(gameObject.name);
         GUILayout.Label($"MoveDirX = {_moveDirX}");
+        GUILayout.Label($"OrientX = {_orientX}");
+        GUILayout.Label($"Vertical Speed = {_verticalSpeed}");
         GUILayout.Label($"Horizontal Speed = {_horizontalSpeed}");
+
         GUILayout.EndVertical();
     }
 }
