@@ -11,8 +11,19 @@ public class HeroController : MonoBehaviour
     private void Update()
     {
         _entity.SetMoveDirX(GetInputMoveX());
+        if (_GetInputDownJump())
+        {
+            if(_entity.IsTouchingGround && !_entity.isJumping)
+            {
+                _entity.JumpStart();
+            }
+        }
     }
 
+    private bool _GetInputDownJump()
+    {
+        return Input.GetKeyDown(KeyCode.Space);
+    }
     private bool IsInputDash()
     {
         bool inputDash = false;
