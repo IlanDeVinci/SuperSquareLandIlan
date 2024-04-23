@@ -18,6 +18,13 @@ public class HeroController : MonoBehaviour
                 _entity.JumpStart();
             }
         }
+        if (_GetInputDownShift())
+        {
+            if (!_entity.isDashing)
+            {
+                _entity.DashStart();
+            }
+        }
 
         if (_entity.isJumpImpulsing)
         {
@@ -28,6 +35,10 @@ public class HeroController : MonoBehaviour
         }
     }
 
+    private bool _GetInputDownShift()
+    {
+        return Input.GetKeyDown(KeyCode.LeftShift);
+    }
     private bool _GetInputJump()
     {
         return Input.GetKey(KeyCode.Space);

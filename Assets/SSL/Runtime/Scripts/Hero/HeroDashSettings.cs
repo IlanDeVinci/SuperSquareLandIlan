@@ -7,6 +7,7 @@ using System;
 
 public class HeroDashSettings
 {
+    public float cooldown = 1f;
     public float speed = 20f;
     public float duration = 0.3f;
 }
