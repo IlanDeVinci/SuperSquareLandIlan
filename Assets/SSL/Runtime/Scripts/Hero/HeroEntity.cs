@@ -41,7 +41,6 @@ public class HeroEntity : MonoBehaviour
 
     public bool isJumping => _jumpState != JumpState.NotJumping;
 
-
     [Header("Dash")]
     [SerializeField] private HeroDashSettings _dashSettings;
 
@@ -319,7 +318,6 @@ public class HeroEntity : MonoBehaviour
         GUILayout.Label($"DashState = {_dashState}");
         GUILayout.Label($"canDash = {canDash}");
         GUILayout.Label($"TimeSinceDash = {_timeSinceDash}");
-
 
         GUILayout.Label($"Vertical Speed = {_verticalSpeed}");
         GUILayout.Label($"Horizontal Speed = {_horizontalSpeed}");
