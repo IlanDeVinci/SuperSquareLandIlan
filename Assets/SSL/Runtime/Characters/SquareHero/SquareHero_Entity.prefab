@@ -1024,7 +1024,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &8337427146718729378
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1113,6 +1113,11 @@ MonoBehaviour:
   _jumpFallSettings:
     fallGravity: 45
     fallSpeedMax: 15
+  _wallJumpSettings:
+    wallJumpVerticalSpeed: 10
+    wallJumpHorizontalSpeed: 10
+    wallJumpMinDuration: 0.15
+    wallJumpMaxDuration: 0.3
   _dashSettings:
     cooldown: 0.5
     groundSpeed: 20

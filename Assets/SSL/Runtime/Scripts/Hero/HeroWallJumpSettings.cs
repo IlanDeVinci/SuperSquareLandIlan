@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+
+[Serializable]
 
 public class HeroWallJumpSettings
 {
-    public float wallJumpSpeed = 10f;
+    public float wallJumpVerticalSpeed = 10f;
+    public float wallJumpHorizontalSpeed = 10f;
     public float wallJumpMinDuration = 0.05f;
     public float wallJumpMaxDuration = 0.15f;
 

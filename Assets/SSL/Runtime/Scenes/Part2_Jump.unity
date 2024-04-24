@@ -1118,6 +1118,10 @@ PrefabInstance:
       value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6480041685457909243, guid: 58ffc10b51f5a6a4996c22f63f520b49, type: 3}
+      propertyPath: _wallJumpSettings.wallJumpMaxDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6480041685457909243, guid: 58ffc10b51f5a6a4996c22f63f520b49, type: 3}
       propertyPath: _airHorizontalMovementSettings.speedMax
       value: 7
       objectReference: {fileID: 0}
