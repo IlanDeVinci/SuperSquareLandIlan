@@ -74,6 +74,7 @@ public class HeroEntity : MonoBehaviour
     public bool canDash => _timeSinceDash >= _dashSettings.cooldown;
     public bool isDashing => _dashState != DashState.NotDashing;
 
+
     enum DashState
     {
         Dashing,
@@ -87,6 +88,23 @@ public class HeroEntity : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool _guiDebug = false;
 
+    private CameraFollowable _cameraFollowable;
+
+    private void Awake()
+    {
+        _cameraFollowable = GetComponent<CameraFollowable>();
+        _cameraFollowable.FollowPositionX = _rigidbody.position.x;
+        _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+
+    }
+
+    private void _UpdateCameraFollowPosition()
+    {
+        _cameraFollowable.FollowPositionX = _rigidbody.position.x;
+        if((IsTouchingGround && !isJumping) || isSliding) {
+            _cameraFollowable.FollowPositionY = _rigidbody.position.y;
+        }
+    }
     private bool JumpMinDurationReached()
     {
         if(_jumpState != JumpState.WallJump)
@@ -497,6 +515,7 @@ public class HeroEntity : MonoBehaviour
     {
         _ApplyGroundDetection();
         _ApplyWallDetection();
+        _UpdateCameraFollowPosition();
         HeroHorizontalMovementSettings horizontalMovementSettings = _GetCurrentHorizontalMovementSettings();
         _timeSinceDash += Time.fixedDeltaTime;
         _slideTimer += Time.deltaTime;

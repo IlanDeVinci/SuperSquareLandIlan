@@ -11,19 +11,52 @@ public class CameraManager : MonoBehaviour
     [Header("Profile System")]
     [SerializeField] private CameraProfile _defaultCameraProfile;
     private CameraProfile _currentCameraProfile;
+    //Transition
     private float _profileTransitionTimer = 0f;
     private float _profileTransitionDuration = 0f;
     private Vector3 _profileTransitionStartPosition;
     private float _profileTransitionStartSize = 0f;
+    //Follow
+    private Vector3 _profileLastFollowDestination;
+    //Damping
+    private Vector3 _dampedPosition;
 
+    private void _SetCameraDampedPosition(Vector3 position)
+    {
+        _dampedPosition = position;
+    }
+    private Vector3 _ApplyDamping(Vector3 position)
+    {
+        if(_currentCameraProfile.UseDampingHorizontally)
+        {
+            _dampedPosition.x = Mathf.Lerp(_dampedPosition.x,position.x, _currentCameraProfile.HorizontalDampingFactor * Time.deltaTime);
+        }
+        else
+        {
+            _dampedPosition.x = position.x;
+        }
+
+        if(_currentCameraProfile.UseDampingVertically)
+        {
+            _dampedPosition.y = Mathf.Lerp(_dampedPosition.y,position.y, _currentCameraProfile.VerticalDampingFactor * Time.deltaTime);
+        }
+        else
+        {
+            _dampedPosition.y = position.y;
+        }
+
+        return _dampedPosition;
+    }
     private Vector3 _FindNextCameraPosition()
     {
         if(_currentCameraProfile.ProfileType == CameraProfileType.FollowTarget)
         {
             if(_currentCameraProfile.TargetToFollow != null)
             {
-                Vector3 destination = _currentCameraProfile.TargetToFollow.position;
-                return destination;
+                CameraFollowable targetToFollow = _currentCameraProfile.TargetToFollow;
+                _profileLastFollowDestination.x = targetToFollow.FollowPositionX;
+                _profileLastFollowDestination.y = targetToFollow.FollowPositionY;
+                return _profileLastFollowDestination;
             }
         }
         return _currentCameraProfile.Position;
@@ -59,18 +92,19 @@ public class CameraManager : MonoBehaviour
     private void Update()
     {
         Vector3 nextPosition = _FindNextCameraPosition();
+        nextPosition = _ApplyDamping(nextPosition); 
         if(_IsPlayingProfileTransition())
         {
             _profileTransitionTimer += Time.deltaTime;
             Vector3 transitionPosition = _CalculateProfileTransitionPosition(nextPosition);
-            SetCameraPosition(transitionPosition);
+            _SetCameraPosition(transitionPosition);
             float transitionSize = _CalculateProfileTransitionCameraSize(_currentCameraProfile.CameraSize);
-            SetCameraSize(transitionSize);
+            _SetCameraSize(transitionSize);
         }
         else
         {
-            SetCameraPosition(nextPosition);
-            SetCameraSize(_currentCameraProfile.CameraSize);
+            _SetCameraPosition(nextPosition);
+            _SetCameraSize(_currentCameraProfile.CameraSize);
         }
     }
 
@@ -81,6 +115,8 @@ public class CameraManager : MonoBehaviour
         {
             _PlayProfileTransition(transition);
         }
+        _SetCameraDampedPosition(_FindNextCameraPosition());
+
     }
 
     public void ExitProfile(CameraProfile cameraProfile, CameraProfileTransition transition = null)
@@ -91,13 +127,15 @@ public class CameraManager : MonoBehaviour
         {
             _PlayProfileTransition(transition);
         }
+        _SetCameraDampedPosition(_FindNextCameraPosition());
+
     }
 
     private void Awake()
     {
         Instance = this;
     }
-    private void SetCameraPosition(Vector3 position)
+    private void _SetCameraPosition(Vector3 position)
     {
         Vector3 newCameraPosition = _camera.transform.position;
         newCameraPosition.x = position.x;
@@ -105,7 +143,7 @@ public class CameraManager : MonoBehaviour
         _camera.transform.position = newCameraPosition;
     }
 
-    private void SetCameraSize(float size)
+    private void _SetCameraSize(float size)
     {
         _camera.orthographicSize = size;
     }
@@ -113,8 +151,10 @@ public class CameraManager : MonoBehaviour
     private void _InitToDefaultProfile()
     {
         _currentCameraProfile = _defaultCameraProfile;
-        SetCameraPosition(_currentCameraProfile.Position);
-        SetCameraSize(_currentCameraProfile.CameraSize);
+        _SetCameraPosition(_currentCameraProfile.Position);
+        _SetCameraSize(_currentCameraProfile.CameraSize);
+        _SetCameraDampedPosition(_FindNextCameraPosition());
+        
     }
     private void Start()
     {

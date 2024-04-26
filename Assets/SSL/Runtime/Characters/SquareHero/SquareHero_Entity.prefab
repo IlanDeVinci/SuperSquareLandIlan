@@ -970,6 +970,7 @@ GameObject:
   - component: {fileID: 8337427146718729378}
   - component: {fileID: 4289331230081096066}
   - component: {fileID: 6480041685457909243}
+  - component: {fileID: 7858150932034380112}
   m_Layer: 0
   m_Name: SquareHero_Entity
   m_TagString: Untagged
@@ -1130,6 +1131,18 @@ MonoBehaviour:
     airDuration: 0.18
   _orientVisualRoot: {fileID: 3024582456938629764}
   _guiDebug: 0
+--- !u!114 &7858150932034380112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6771865885331362632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb9ab15fab31964d84d4ff0d0d1a3af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8032715401077901592
 GameObject:
   m_ObjectHideFlags: 0
