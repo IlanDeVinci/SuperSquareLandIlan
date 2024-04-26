@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
-
+using CameraProfileType = CameraProfile.CameraProfileType;
 public class CameraManager : MonoBehaviour
 {
+
 
     public static CameraManager Instance { get; private set; }
     [Header("Camera")]
@@ -15,6 +16,18 @@ public class CameraManager : MonoBehaviour
     private Vector3 _profileTransitionStartPosition;
     private float _profileTransitionStartSize = 0f;
 
+    private Vector3 _FindNextCameraPosition()
+    {
+        if(_currentCameraProfile.ProfileType == CameraProfileType.FollowTarget)
+        {
+            if(_currentCameraProfile.TargetToFollow != null)
+            {
+                Vector3 destination = _currentCameraProfile.TargetToFollow.position;
+                return destination;
+            }
+        }
+        return _currentCameraProfile.Position;
+    }
     private float _CalculateProfileTransitionCameraSize(float endSize)
     {
         float percent = _profileTransitionTimer / _profileTransitionDuration;
@@ -45,17 +58,18 @@ public class CameraManager : MonoBehaviour
     }
     private void Update()
     {
+        Vector3 nextPosition = _FindNextCameraPosition();
         if(_IsPlayingProfileTransition())
         {
             _profileTransitionTimer += Time.deltaTime;
-            Vector3 transitionPosition = _CalculateProfileTransitionPosition(_currentCameraProfile.Position);
+            Vector3 transitionPosition = _CalculateProfileTransitionPosition(nextPosition);
             SetCameraPosition(transitionPosition);
             float transitionSize = _CalculateProfileTransitionCameraSize(_currentCameraProfile.CameraSize);
             SetCameraSize(transitionSize);
         }
         else
         {
-            SetCameraPosition(_currentCameraProfile.Position);
+            SetCameraPosition(nextPosition);
             SetCameraSize(_currentCameraProfile.CameraSize);
         }
     }
