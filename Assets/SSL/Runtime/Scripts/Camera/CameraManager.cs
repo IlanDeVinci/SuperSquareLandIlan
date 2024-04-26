@@ -58,9 +58,6 @@ public class CameraManager : MonoBehaviour
 
         if (previousOrient != _currentCameraProfile.TargetToFollow.FollowDirection)
         {
-            Debug.Log(_currentCameraProfile.BoundsRect.xMin + 2*_currentCameraProfile.CameraSize);
-            Debug.Log(_currentCameraProfile.BoundsRect.xMax - 2* _currentCameraProfile.CameraSize);
-
             changeOrientTimer = 0f;
             startingOffset = -currentOffset;
             previousOrient = _currentCameraProfile.TargetToFollow.FollowDirection;
@@ -78,47 +75,7 @@ public class CameraManager : MonoBehaviour
                 {
                     startingOffset = position.x - (_currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize);
                 }
-
             }
-
-            
-            /*
-
-            Vector3 testPos1, testPos2;
-            testPos1 = new Vector3(position.x - startingOffset, position.y, position.z);
-            testPos2 = new Vector3(position.x + startingOffset, position.y, position.z);
-            testPos1 = _ClampPositionIntoBounds(testPos1);
-            testPos2 = _ClampPositionIntoBounds(testPos2);
-            if (previousOrient == 1)
-            {
-                startingOffset = position.x - Mathf.Max(position.x - startingOffset, testPos1.x);
-            }
-            else
-            {
-                startingOffset = Mathf.Max(position.x + startingOffset, testPos2.x) - position.x;
-
-            }
-            
-            //startingOffset = position.x - Mathf.Clamp(position.x + startingOffset, testPos1.x, testPos2.x);
-            Debug.Log((position.x));
-            
-            Debug.Log(testPos1);
-            Debug.Log(testPos2);
-            */
-            /*
-            if (previousOrient == 1)
-            {
-                startingOffset += position.x - testPos.x;
-            }
-            else
-            {
-                startingOffset += position.x - testPos.x;
-                //startingOffset = -startingOffset;
-            }
-            */
-
-            Debug.Log($"offset = {currentOffset}");
-            Debug.Log($"start = {startingOffset}");
         }
 
         if (changeOrientTimer <= _currentCameraProfile.FollowOffset.followOffsetDamping)
