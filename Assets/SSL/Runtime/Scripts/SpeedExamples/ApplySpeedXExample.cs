@@ -3,7 +3,7 @@
 public class ApplySpeedXExample : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
-    
+
     private void Update()
     {
         Vector3 position = transform.position;

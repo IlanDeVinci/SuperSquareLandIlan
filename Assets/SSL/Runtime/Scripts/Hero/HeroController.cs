@@ -37,7 +37,7 @@ public class HeroController : MonoBehaviour
 
         if (_GetInputDownJump())
         {
-            if((_entity.canJump) || (IsCoyoteTimeActive() && !_entity.isJumping))
+            if ((_entity.canJump) || (IsCoyoteTimeActive() && !_entity.isJumping))
             {
                 _entity.JumpStart();
             }
@@ -47,7 +47,7 @@ public class HeroController : MonoBehaviour
             }
         }
 
-        if(IsJumpBufferActive())
+        if (IsJumpBufferActive())
         {
             if ((_entity.canJump) || (IsCoyoteTimeActive() && !_entity.isJumping))
             {
@@ -126,7 +126,8 @@ public class HeroController : MonoBehaviour
     private bool IsInputDash()
     {
         bool inputDash = false;
-        if(Input.GetKeyDown(KeyCode.E)) {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
             inputDash = true;
         }
         return inputDash;
@@ -136,11 +137,12 @@ public class HeroController : MonoBehaviour
     private float GetInputMoveX()
     {
         float inputMoveX = 0f;
-        if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q)){
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.Q))
+        {
             inputMoveX = -1f;
         }
 
-        if(Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D))
         {
             inputMoveX = 1f;
         }

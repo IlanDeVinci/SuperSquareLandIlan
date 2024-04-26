@@ -103,13 +103,14 @@ public class HeroEntity : MonoBehaviour
     {
         _cameraFollowable.FollowDirection = _orientX;
         _cameraFollowable.FollowPositionX = _rigidbody.position.x;
-        if((IsTouchingGround && !isJumping) || isSliding) {
+        if ((IsTouchingGround && !isJumping) || isSliding)
+        {
             _cameraFollowable.FollowPositionY = _rigidbody.position.y;
         }
     }
     private bool JumpMinDurationReached()
     {
-        if(_jumpState != JumpState.WallJump)
+        if (_jumpState != JumpState.WallJump)
         {
             return _jumpTimer >= _jumpSettings[_jumpIndex - 1].jumpMinDuration;
         }
@@ -136,7 +137,7 @@ public class HeroEntity : MonoBehaviour
             _orientX = 1f;
         }
 
-        if(isSlidingRight())
+        if (isSlidingRight())
         {
             _orientX = -1f;
         }
@@ -156,7 +157,7 @@ public class HeroEntity : MonoBehaviour
     {
         changeOrientIfSliding();
         ClampFallSpeedWhenSliding();
-        if(!IsTouchingWallRight && !IsTouchingWallLeft)
+        if (!IsTouchingWallRight && !IsTouchingWallLeft)
         {
             _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 1.5f;
         }
@@ -167,7 +168,7 @@ public class HeroEntity : MonoBehaviour
     {
         if (canDash)
         {
-            if(_moveDirX != 0)
+            if (_moveDirX != 0)
             {
                 _dashOrient = _moveDirX;
 
@@ -203,7 +204,7 @@ public class HeroEntity : MonoBehaviour
         if (isAirDash)
         {
             _jumpState = JumpState.NotJumping;
-            if(_dashOrient == 1)
+            if (_dashOrient == 1)
             {
                 if (!IsTouchingWallRight)
                 {
@@ -249,7 +250,7 @@ public class HeroEntity : MonoBehaviour
         }
         else
         {
-            if(_dashOrient == 1)
+            if (_dashOrient == 1)
             {
                 if (!IsTouchingWallRight)
                 {
@@ -305,7 +306,7 @@ public class HeroEntity : MonoBehaviour
     public void JumpStart()
     {
 
-        if(!isSliding)
+        if (!isSliding)
         {
             _jumpState = JumpState.JumpImpulsion;
             _jumpTimer = 0f;
@@ -332,9 +333,9 @@ public class HeroEntity : MonoBehaviour
     private void _UpdateJumpStateImpulsion(int index)
     {
         _jumpTimer += Time.fixedDeltaTime;
-        if (_jumpTimer < _jumpSettings[index-1].jumpMaxDuration)
+        if (_jumpTimer < _jumpSettings[index - 1].jumpMaxDuration)
         {
-            _verticalSpeed = _jumpSettings[index-1].jumpSpeed;
+            _verticalSpeed = _jumpSettings[index - 1].jumpSpeed;
         }
         else
         {
@@ -358,7 +359,7 @@ public class HeroEntity : MonoBehaviour
     private void _UpdateJumpStateWalljump()
     {
         _jumpTimer += Time.fixedDeltaTime;
-        if(_jumpTimer < _wallJumpSettings.wallJumpMaxDuration)
+        if (_jumpTimer < _wallJumpSettings.wallJumpMaxDuration)
         {
             _verticalSpeed = _wallJumpSettings.wallJumpVerticalSpeed;
             _horizontalSpeed = _wallJumpSettings.wallJumpHorizontalSpeed;
@@ -389,11 +390,11 @@ public class HeroEntity : MonoBehaviour
     private void _ApplyGroundDetection()
     {
         IsTouchingGround = _groundDetector.DetectGroundNearBy();
-        if(IsTouchingGround && _jumpState != JumpState.JumpImpulsion)
+        if (IsTouchingGround && _jumpState != JumpState.JumpImpulsion)
         {
             _jumpIndex = 0;
         }
-        if(IsTouchingGround)
+        if (IsTouchingGround)
         {
             _slideTimer = slidingCooldown;
             wasSliding = false;
@@ -455,16 +456,16 @@ public class HeroEntity : MonoBehaviour
 
     private void _ResetSpeedOnWallCollision()
     {
-        if(!isJumping)
+        if (!isJumping)
         {
-            if(IsTouchingWallLeft)
+            if (IsTouchingWallLeft)
             {
-                if(_orientX != 1)
+                if (_orientX != 1)
                 {
                     _horizontalSpeed = 0;
                 }
             }
-            if(IsTouchingWallRight)
+            if (IsTouchingWallRight)
             {
                 if (_orientX != -1)
                 {
@@ -562,10 +563,10 @@ public class HeroEntity : MonoBehaviour
         _ApplyHorizontalSpeed();
 
         _ApplyVerticalSpeed();
-        
+
         _ResetSpeedOnWallCollision();
-        
-        if(isSliding)
+
+        if (isSliding)
         {
             enterSlide();
             UpdateSlide();

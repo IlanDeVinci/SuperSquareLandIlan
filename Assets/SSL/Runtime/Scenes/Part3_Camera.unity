@@ -1554,7 +1554,7 @@ MonoBehaviour:
   _profileType: 1
   _targetToFollow: {fileID: 732721623840024186}
   _followOffset:
-    followOffsetX: 5
+    followOffsetX: 7
     followOffsetDamping: 1.5
   _useFollowOffset: 1
   _autoScroll:

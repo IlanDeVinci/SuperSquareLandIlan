@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GroundDetector : MonoBehaviour
@@ -12,7 +10,7 @@ public class GroundDetector : MonoBehaviour
 
     public bool DetectGroundNearBy()
     {
-        foreach(Transform detectionPoint in _detectionPoints)
+        foreach (Transform detectionPoint in _detectionPoints)
         {
             RaycastHit2D hitResult = Physics2D.Raycast(
                 detectionPoint.position,
@@ -20,12 +18,12 @@ public class GroundDetector : MonoBehaviour
                 _detectionLength,
                 _groundLayerMask
                 );
-            if(hitResult.collider != null)
+            if (hitResult.collider != null)
             {
                 return true;
             }
         }
         return false;
     }
-    
+
 }

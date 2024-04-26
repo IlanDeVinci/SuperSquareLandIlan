@@ -2,25 +2,31 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace FullscreenEditor {
+namespace FullscreenEditor
+{
     [InitializeOnLoad]
-    public class RestoreCursorState {
+    public class RestoreCursorState
+    {
 
-        static RestoreCursorState() {
+        static RestoreCursorState()
+        {
             var cursorVisible = Cursor.visible;
 
             // this is where the magic happens
-            Action<FullscreenContainer> magic = (fs) => {
+            Action<FullscreenContainer> magic = (fs) =>
+            {
                 if (!FullscreenPreferences.RestoreCursorLockAndHideState) return;
 
                 // frame count doesn't seem to make much of a difference,
                 // but I think it's best to do this after the view is
                 // focused by the "FixGameViewMouseInput" class
-                After.Frames(55, () => {
+                After.Frames(55, () =>
+                {
                     var gameView = fs.m_dst.Window && fs.m_dst.Window.IsOfType(Types.GameView) ? fs.m_dst.Window :
                                     fs.m_src.Window && fs.m_src.Window.IsOfType(Types.GameView) ? fs.m_src.Window : null;
 
-                    if (!EditorApplication.isPaused && gameView && gameView.IsOfType(Types.GameView) && gameView.HasMethod("AllowCursorLockAndHide")) {
+                    if (!EditorApplication.isPaused && gameView && gameView.IsOfType(Types.GameView) && gameView.HasMethod("AllowCursorLockAndHide"))
+                    {
                         gameView.InvokeMethod("AllowCursorLockAndHide", true);
                         Unsupported.SetAllowCursorHide(true);
                         Cursor.visible = cursorVisible;
@@ -28,7 +34,8 @@ namespace FullscreenEditor {
                 });
             };
 
-            Action<FullscreenContainer> storeCursorVisible = (fs) => {
+            Action<FullscreenContainer> storeCursorVisible = (fs) =>
+            {
                 cursorVisible = Cursor.visible;
             };
 

@@ -5,7 +5,7 @@ public class AutoUpdateColliderFromSpriteSize : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
-    
+
     private void Awake()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();

@@ -16,7 +16,7 @@ public class CameraProfile : MonoBehaviour
     [Header("Autoscroll")]
     [SerializeField] private CameraAutoScroll _autoScroll;
 
-    public CameraAutoScroll CameraAutoScroll => _autoScroll; 
+    public CameraAutoScroll CameraAutoScroll => _autoScroll;
 
 
     public CameraFollowable TargetToFollow => _targetToFollow;
@@ -32,13 +32,13 @@ public class CameraProfile : MonoBehaviour
 
 
     public bool UseFollowOffset => _useFollowOffset;
-    public CameraFollowOffset FollowOffset=> _followOffset;
+    public CameraFollowOffset FollowOffset => _followOffset;
 
 
 
     [Header("Bounds")]
     [SerializeField] private bool _hasBounds = false;
-    [SerializeField] private Rect _boundsRect = new Rect(0f,0f,10f,10f);
+    [SerializeField] private Rect _boundsRect = new Rect(0f, 0f, 10f, 10f);
     public bool HasBounds => _hasBounds;
     public Rect BoundsRect => _boundsRect;
 
@@ -62,7 +62,7 @@ public class CameraProfile : MonoBehaviour
     private void Awake()
     {
         _camera = GetComponent<Camera>();
-        if ( _camera != null)
+        if (_camera != null)
         {
             _camera.enabled = false;
         }
