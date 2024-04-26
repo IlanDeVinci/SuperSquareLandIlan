@@ -100,6 +100,7 @@ public class HeroEntity : MonoBehaviour
 
     private void _UpdateCameraFollowPosition()
     {
+        _cameraFollowable.FollowDirection = _orientX;
         _cameraFollowable.FollowPositionX = _rigidbody.position.x;
         if((IsTouchingGround && !isJumping) || isSliding) {
             _cameraFollowable.FollowPositionY = _rigidbody.position.y;
@@ -154,6 +155,10 @@ public class HeroEntity : MonoBehaviour
     {
         changeOrientIfSliding();
         ClampFallSpeedWhenSliding();
+        if(!IsTouchingWallRight && !IsTouchingWallLeft)
+        {
+            _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 1.5f;
+        }
     }
 
 

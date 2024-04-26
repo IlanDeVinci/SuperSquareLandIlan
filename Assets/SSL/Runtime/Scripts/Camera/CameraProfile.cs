@@ -8,6 +8,17 @@ public class CameraProfile : MonoBehaviour
 
     [Header("Follow")]
     [SerializeField] private CameraFollowable _targetToFollow = null;
+
+    [Header("Offset")]
+    [SerializeField] private CameraFollowOffset _followOffset;
+    [SerializeField] private bool _useFollowOffset = false;
+
+    [Header("Autoscroll")]
+    [SerializeField] private CameraAutoScroll _autoScroll;
+
+    public CameraAutoScroll CameraAutoScroll => _autoScroll; 
+
+
     public CameraFollowable TargetToFollow => _targetToFollow;
     public CameraProfileType ProfileType => _profileType;
 
@@ -16,6 +27,13 @@ public class CameraProfile : MonoBehaviour
     [SerializeField] private bool _useDampingVertically = false;
     [SerializeField] private float _horizontalDampingFactor = 5f;
     [SerializeField] private float _verticalDampingFactor = 5f;
+
+
+
+
+    public bool UseFollowOffset => _useFollowOffset;
+    public CameraFollowOffset FollowOffset=> _followOffset;
+
 
 
     [Header("Bounds")]
@@ -37,7 +55,8 @@ public class CameraProfile : MonoBehaviour
     public enum CameraProfileType
     {
         Static = 0,
-        FollowTarget
+        FollowTarget,
+        AutoScroll
     }
 
     private void Awake()

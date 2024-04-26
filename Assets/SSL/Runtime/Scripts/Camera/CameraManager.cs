@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using CameraProfileType = CameraProfile.CameraProfileType;
+
 public class CameraManager : MonoBehaviour
 {
 
@@ -20,10 +21,77 @@ public class CameraManager : MonoBehaviour
     private Vector3 _profileLastFollowDestination;
     //Damping
     private Vector3 _dampedPosition;
+    //Offset
+    private float previousOrient = 1f;
+    private float changeOrientTimer = 0f;
+    private float currentOffset = 0f;
+    private float startingOffset = 0f;
+    //Autoscroll
+    private bool autoScrollStart = false;
+    private Vector3 autoScrollStartPosition = Vector3.zero;
+    private float timeSinceAutoScrollStart = 0f;
 
+    private Vector3 _AutoScrollCamera(Vector3 position)
+    {
+        if (_currentCameraProfile.ProfileType != CameraProfileType.AutoScroll) {
+            autoScrollStart = false;
+            return position;
+        };
+        if (!autoScrollStart) {
+            autoScrollStart = true;
+            timeSinceAutoScrollStart = 0f;
+            autoScrollStartPosition = position;
+        }
+        timeSinceAutoScrollStart += Time.deltaTime;
+        position.x = autoScrollStartPosition.x + _currentCameraProfile.CameraAutoScroll.horizontalSpeed * timeSinceAutoScrollStart;
+        position.y = autoScrollStartPosition.y + _currentCameraProfile.CameraAutoScroll.verticalSpeed * timeSinceAutoScrollStart;
+
+        return position;
+    }
+    private Vector3 _OffsetCameraPosition(Vector3 position)
+    {
+        if (!_currentCameraProfile.UseFollowOffset && !(_currentCameraProfile.ProfileType == CameraProfileType.FollowTarget)) return position;
+
+        if (previousOrient != _currentCameraProfile.TargetToFollow.FollowDirection)
+        {
+            changeOrientTimer = 0f;
+            startingOffset = -currentOffset;
+            previousOrient = _currentCameraProfile.TargetToFollow.FollowDirection;
+        }
+        if (changeOrientTimer <= _currentCameraProfile.FollowOffset.followOffsetDamping)
+        {
+            float percent = changeOrientTimer / _currentCameraProfile.FollowOffset.followOffsetDamping;
+            changeOrientTimer += Time.deltaTime;
+            currentOffset = Mathf.Lerp(startingOffset, _currentCameraProfile.FollowOffset.followOffsetX, percent);
+            if (_currentCameraProfile.TargetToFollow.FollowDirection == 1)
+            {
+                position.x += currentOffset;
+            }
+            else
+            {
+                position.x -= currentOffset;
+
+            }
+
+        }
+        else
+        {
+            if (_currentCameraProfile.TargetToFollow.FollowDirection == 1)
+            {
+                position.x += _currentCameraProfile.FollowOffset.followOffsetX;
+            }
+            else
+            {
+                position.x -= _currentCameraProfile.FollowOffset.followOffsetX;
+
+            }
+        }
+
+        return position;
+    }
     private Vector3 _ClampPositionIntoBounds(Vector3 position)
     {
-        if(!_currentCameraProfile.HasBounds) return position;
+        if (!_currentCameraProfile.HasBounds) return position;
 
         Rect boundsRect = _currentCameraProfile.BoundsRect;
         Vector3 worldBottomLeft = _camera.ScreenToWorldPoint(new Vector3(0f, 0f));
@@ -31,7 +99,7 @@ public class CameraManager : MonoBehaviour
         Vector3 worldScreenSize = new Vector2(worldTopRight.x - worldBottomLeft.x, worldTopRight.y - worldBottomLeft.y);
         Vector3 worldHalfScreenSize = worldScreenSize / 2;
 
-        if(position.x > boundsRect.xMax - worldHalfScreenSize.x)
+        if (position.x > boundsRect.xMax - worldHalfScreenSize.x)
         {
             position.x = boundsRect.xMax - worldHalfScreenSize.x;
         }
@@ -55,18 +123,18 @@ public class CameraManager : MonoBehaviour
     }
     private Vector3 _ApplyDamping(Vector3 position)
     {
-        if(_currentCameraProfile.UseDampingHorizontally)
+        if (_currentCameraProfile.UseDampingHorizontally)
         {
-            _dampedPosition.x = Mathf.Lerp(_dampedPosition.x,position.x, _currentCameraProfile.HorizontalDampingFactor * Time.deltaTime);
+            _dampedPosition.x = Mathf.Lerp(_dampedPosition.x, position.x, _currentCameraProfile.HorizontalDampingFactor * Time.deltaTime);
         }
         else
         {
             _dampedPosition.x = position.x;
         }
 
-        if(_currentCameraProfile.UseDampingVertically)
+        if (_currentCameraProfile.UseDampingVertically)
         {
-            _dampedPosition.y = Mathf.Lerp(_dampedPosition.y,position.y, _currentCameraProfile.VerticalDampingFactor * Time.deltaTime);
+            _dampedPosition.y = Mathf.Lerp(_dampedPosition.y, position.y, _currentCameraProfile.VerticalDampingFactor * Time.deltaTime);
         }
         else
         {
@@ -77,9 +145,9 @@ public class CameraManager : MonoBehaviour
     }
     private Vector3 _FindNextCameraPosition()
     {
-        if(_currentCameraProfile.ProfileType == CameraProfileType.FollowTarget)
+        if (_currentCameraProfile.ProfileType == CameraProfileType.FollowTarget)
         {
-            if(_currentCameraProfile.TargetToFollow != null)
+            if (_currentCameraProfile.TargetToFollow != null)
             {
                 CameraFollowable targetToFollow = _currentCameraProfile.TargetToFollow;
                 _profileLastFollowDestination.x = targetToFollow.FollowPositionX;
@@ -120,10 +188,11 @@ public class CameraManager : MonoBehaviour
     private void Update()
     {
         Vector3 nextPosition = _FindNextCameraPosition();
+        nextPosition = _OffsetCameraPosition(nextPosition);
+        nextPosition = _AutoScrollCamera(nextPosition);
         nextPosition = _ClampPositionIntoBounds(nextPosition);
-        nextPosition = _ApplyDamping(nextPosition); 
-
-        if(_IsPlayingProfileTransition())
+        nextPosition = _ApplyDamping(nextPosition);
+        if (_IsPlayingProfileTransition())
         {
             _profileTransitionTimer += Time.deltaTime;
             Vector3 transitionPosition = _CalculateProfileTransitionPosition(nextPosition);
@@ -172,7 +241,7 @@ public class CameraManager : MonoBehaviour
         newCameraPosition.y = position.y;
         _camera.transform.position = newCameraPosition;
     }
-    
+
     private void _SetCameraSize(float size)
     {
         _camera.orthographicSize = size;
@@ -184,7 +253,7 @@ public class CameraManager : MonoBehaviour
         _SetCameraPosition(_currentCameraProfile.Position);
         _SetCameraSize(_currentCameraProfile.CameraSize);
         _SetCameraDampedPosition(_ClampPositionIntoBounds(_FindNextCameraPosition()));
-        
+
     }
     private void Start()
     {
