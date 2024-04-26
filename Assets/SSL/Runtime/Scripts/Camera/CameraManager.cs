@@ -21,6 +21,34 @@ public class CameraManager : MonoBehaviour
     //Damping
     private Vector3 _dampedPosition;
 
+    private Vector3 _ClampPositionIntoBounds(Vector3 position)
+    {
+        if(!_currentCameraProfile.HasBounds) return position;
+
+        Rect boundsRect = _currentCameraProfile.BoundsRect;
+        Vector3 worldBottomLeft = _camera.ScreenToWorldPoint(new Vector3(0f, 0f));
+        Vector3 worldTopRight = _camera.ScreenToWorldPoint(new Vector3(_camera.pixelWidth, _camera.pixelHeight));
+        Vector3 worldScreenSize = new Vector2(worldTopRight.x - worldBottomLeft.x, worldTopRight.y - worldBottomLeft.y);
+        Vector3 worldHalfScreenSize = worldScreenSize / 2;
+
+        if(position.x > boundsRect.xMax - worldHalfScreenSize.x)
+        {
+            position.x = boundsRect.xMax - worldHalfScreenSize.x;
+        }
+        if (position.x < boundsRect.xMin + worldHalfScreenSize.x)
+        {
+            position.x = boundsRect.xMin + worldHalfScreenSize.x;
+        }
+        if (position.y > boundsRect.yMax - worldHalfScreenSize.y)
+        {
+            position.y = boundsRect.yMax - worldHalfScreenSize.y;
+        }
+        if (position.y < boundsRect.yMin + worldHalfScreenSize.y)
+        {
+            position.y = boundsRect.yMin + worldHalfScreenSize.y;
+        }
+        return position;
+    }
     private void _SetCameraDampedPosition(Vector3 position)
     {
         _dampedPosition = position;
@@ -92,7 +120,9 @@ public class CameraManager : MonoBehaviour
     private void Update()
     {
         Vector3 nextPosition = _FindNextCameraPosition();
+        nextPosition = _ClampPositionIntoBounds(nextPosition);
         nextPosition = _ApplyDamping(nextPosition); 
+
         if(_IsPlayingProfileTransition())
         {
             _profileTransitionTimer += Time.deltaTime;
@@ -142,7 +172,7 @@ public class CameraManager : MonoBehaviour
         newCameraPosition.y = position.y;
         _camera.transform.position = newCameraPosition;
     }
-
+    
     private void _SetCameraSize(float size)
     {
         _camera.orthographicSize = size;
@@ -153,7 +183,7 @@ public class CameraManager : MonoBehaviour
         _currentCameraProfile = _defaultCameraProfile;
         _SetCameraPosition(_currentCameraProfile.Position);
         _SetCameraSize(_currentCameraProfile.CameraSize);
-        _SetCameraDampedPosition(_FindNextCameraPosition());
+        _SetCameraDampedPosition(_ClampPositionIntoBounds(_FindNextCameraPosition()));
         
     }
     private void Start()
