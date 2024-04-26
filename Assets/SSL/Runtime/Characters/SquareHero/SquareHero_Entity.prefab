@@ -1092,7 +1092,7 @@ MonoBehaviour:
     speedMax: 6
   _airHorizontalMovementSettings:
     acceleration: 20
-    deceleration: 7
+    deceleration: 10
     turnBackFrictions: 100
     speedMax: 7
   _fallSettings:
@@ -1100,30 +1100,34 @@ MonoBehaviour:
     fallSpeedMax: 15
   _groundDetector: {fileID: 8337427146718729378}
   _wallDetector: {fileID: 4289331230081096066}
+  wasTouchingWall: 0
   _jumpSettings:
-  - jumpSpeed: 10
-    jumpMinDuration: 0.05
+  - jumpSpeed: 12
+    jumpMinDuration: 0.07
     jumpMaxDuration: 0.15
   - jumpSpeed: 10
-    jumpMinDuration: 0.05
+    jumpMinDuration: 0.07
     jumpMaxDuration: 0.15
-  - jumpSpeed: 10
+  - jumpSpeed: 8
     jumpMinDuration: 0.05
-    jumpMaxDuration: 0.15
+    jumpMaxDuration: 0.1
   _jumpFallSettings:
-    fallGravity: 45
+    fallGravity: 60
     fallSpeedMax: 15
   _wallJumpSettings:
-    wallJumpVerticalSpeed: 10
-    wallJumpHorizontalSpeed: 10
-    wallJumpMinDuration: 0.15
-    wallJumpMaxDuration: 0.3
+    wallJumpVerticalSpeed: 12
+    wallJumpHorizontalSpeed: 8
+    wallJumpMinDuration: 0.07
+    wallJumpMaxDuration: 0.2
+  _slideTimer: 1
+  wasSliding: 1
+  slidingCooldown: 0.35
   _dashSettings:
     cooldown: 0.5
-    groundSpeed: 20
-    groundDuration: 0.12
-    airSpeed: 25
-    airDuration: 0.16
+    groundSpeed: 15
+    groundDuration: 0.15
+    airSpeed: 20
+    airDuration: 0.18
   _orientVisualRoot: {fileID: 3024582456938629764}
   _guiDebug: 0
 --- !u!1 &8032715401077901592

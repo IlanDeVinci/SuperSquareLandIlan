@@ -114,19 +114,19 @@ public class HeroEntity : MonoBehaviour
         if (isSlidingLeft())
         {
             _orientX = 1f;
-            if(_jumpState != JumpState.WallJump) _ResetHorizontalSpeed();
         }
 
         if(isSlidingRight())
         {
             _orientX = -1f;
-            if (_jumpState != JumpState.WallJump) _ResetHorizontalSpeed();
         }
+        if (_jumpState != JumpState.WallJump) _ResetHorizontalSpeed();
+
     }
 
     private void ClampFallSpeedWhenSliding()
     {
-        if ((isSlidingLeft() || isSlidingRight()) && _jumpState != JumpState.JumpImpulsion)
+        if (isSliding && _jumpState != JumpState.JumpImpulsion)
         {
             _verticalSpeed = Mathf.Clamp(_verticalSpeed, -2f, _verticalSpeed);
         }
@@ -280,7 +280,7 @@ public class HeroEntity : MonoBehaviour
     }
     public void JumpStart()
     {
-        wasSliding = false;
+
         if(!isSliding)
         {
             _jumpState = JumpState.JumpImpulsion;
@@ -292,10 +292,11 @@ public class HeroEntity : MonoBehaviour
         }
         else
         {
-            _slideTimer = slidingCooldown;
             _jumpState = JumpState.WallJump;
             _jumpTimer = 0f;
+
         }
+        _slideTimer = slidingCooldown;
 
     }
 
