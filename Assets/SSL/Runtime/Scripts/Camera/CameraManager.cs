@@ -33,19 +33,21 @@ public class CameraManager : MonoBehaviour
 
     private Vector3 _AutoScrollCamera(Vector3 position)
     {
-        if (_currentCameraProfile.ProfileType != CameraProfileType.AutoScroll) {
+        if (_currentCameraProfile.ProfileType != CameraProfileType.AutoScroll)
+        {
             autoScrollStart = false;
-            return position;
-        };
-        if (!autoScrollStart) {
-            autoScrollStart = true;
-            timeSinceAutoScrollStart = 0f;
-            autoScrollStartPosition = position;
+        } 
+        else
+        {
+            if (!autoScrollStart) {
+                autoScrollStart = true;
+                timeSinceAutoScrollStart = 0f;
+                autoScrollStartPosition = position;
+            }
+            timeSinceAutoScrollStart += Time.deltaTime;
+            position.x = autoScrollStartPosition.x + _currentCameraProfile.CameraAutoScroll.horizontalSpeed * timeSinceAutoScrollStart;
+            position.y = autoScrollStartPosition.y + _currentCameraProfile.CameraAutoScroll.verticalSpeed * timeSinceAutoScrollStart;
         }
-        timeSinceAutoScrollStart += Time.deltaTime;
-        position.x = autoScrollStartPosition.x + _currentCameraProfile.CameraAutoScroll.horizontalSpeed * timeSinceAutoScrollStart;
-        position.y = autoScrollStartPosition.y + _currentCameraProfile.CameraAutoScroll.verticalSpeed * timeSinceAutoScrollStart;
-
         return position;
     }
     private Vector3 _OffsetCameraPosition(Vector3 position)

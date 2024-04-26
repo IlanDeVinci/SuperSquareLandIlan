@@ -89,6 +89,7 @@ public class HeroEntity : MonoBehaviour
     [SerializeField] private bool _guiDebug = false;
 
     private CameraFollowable _cameraFollowable;
+    public bool isHorizontalMoving => _moveDirX != 0f;
 
     private void Awake()
     {
