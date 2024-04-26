@@ -1042,7 +1042,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _entity: {fileID: 6480041685457909243}
   _objectToRotate: {fileID: 3024582456938629764}
-  rotationPeriod: 0.3
+  rotationPeriod: 0.2
   rotationFactor: 10
   _isRotationEnabled: 1
 --- !u!114 &8337427146718729378
@@ -1140,8 +1140,7 @@ MonoBehaviour:
     wallJumpMinDuration: 0.07
     wallJumpMaxDuration: 0.2
   _slideTimer: 1
-  wasSliding: 1
-  slidingCooldown: 0.35
+  slidingCooldown: 0.25
   _dashSettings:
     cooldown: 0.5
     groundSpeed: 15
@@ -1165,7 +1164,7 @@ MonoBehaviour:
   _entity: {fileID: 6480041685457909243}
   _objectToBounce: {fileID: 3024582456938629764}
   bouncePeriod: 0.1
-  bounceHeight: 0.3
+  bounceHeight: 0.2
   _isBounceEnabled: 1
 --- !u!114 &7858150932034380112
 MonoBehaviour:

@@ -57,7 +57,6 @@ public class HeroEntity : MonoBehaviour
     public bool canJump => (hasJumpsLeft && ((_jumpState == JumpState.NotJumping) || (_jumpState == JumpState.Falling))) || isSliding;
     public bool isSliding => isSlidingLeft() || isSlidingRight() || _slideTimer < slidingCooldown;
     public float _slideTimer = 0f;
-    public bool wasSliding = false;
 
     [SerializeField] private float slidingCooldown = 0.2f;
 
@@ -114,10 +113,9 @@ public class HeroEntity : MonoBehaviour
         {
             return _jumpTimer >= _jumpSettings[_jumpIndex - 1].jumpMinDuration;
         }
-        else
-        {
-            return _jumpTimer >= _wallJumpSettings.wallJumpMinDuration;
-        }
+        
+        return _jumpTimer >= _wallJumpSettings.wallJumpMinDuration;
+        
     }
 
     private bool isSlidingLeft()
@@ -147,7 +145,7 @@ public class HeroEntity : MonoBehaviour
 
     private void ClampFallSpeedWhenSliding()
     {
-        if (isSliding && _jumpState != JumpState.JumpImpulsion)
+        if (isSliding)
         {
             _verticalSpeed = Mathf.Clamp(_verticalSpeed, -2f, _verticalSpeed);
         }
@@ -159,7 +157,7 @@ public class HeroEntity : MonoBehaviour
         ClampFallSpeedWhenSliding();
         if (!IsTouchingWallRight && !IsTouchingWallLeft)
         {
-            _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 1.5f;
+            _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 1.3f;
         }
     }
 
@@ -322,7 +320,6 @@ public class HeroEntity : MonoBehaviour
 
         }
         _slideTimer = slidingCooldown;
-
     }
 
     public void StopJumpImpulsion()
@@ -397,7 +394,6 @@ public class HeroEntity : MonoBehaviour
         if (IsTouchingGround)
         {
             _slideTimer = slidingCooldown;
-            wasSliding = false;
         }
     }
 
@@ -442,15 +438,10 @@ public class HeroEntity : MonoBehaviour
     {
         if (isSlidingLeft() || isSlidingRight())
         {
-            if (!wasSliding)
+            if (_jumpState != JumpState.WallJump)
             {
                 _slideTimer = 0;
-                wasSliding = true;
             }
-        }
-        else
-        {
-            wasSliding = false;
         }
     }
 
@@ -633,8 +624,6 @@ public class HeroEntity : MonoBehaviour
         }
 
         GUILayout.Label($"isSliding = {isSliding}");
-        GUILayout.Label($"WasSliding = {wasSliding}");
-
         GUILayout.Label($"Slide Timer = {_slideTimer}");
 
 
