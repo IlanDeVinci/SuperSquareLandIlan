@@ -73,25 +73,29 @@ public class CameraManager : MonoBehaviour
             startingOffset = -currentOffset;
             previousOrient = _currentCameraProfile.TargetToFollow.FollowDirection;
             if (position.x + startingOffset <
-                _currentCameraProfile.BoundsRect.xMin + 2 * _currentCameraProfile.CameraSize)
+                _currentCameraProfile.BoundsRect.xMin + 2 * _currentCameraProfile.CameraSize - 1)
             {
                 if (previousOrient == 1)
                 {
-                    startingOffset = (_currentCameraProfile.BoundsRect.xMin + 2 * _currentCameraProfile.CameraSize) -
-                                     position.x;
+                    startingOffset =
+                        (_currentCameraProfile.BoundsRect.xMin + 2 * _currentCameraProfile.CameraSize - 1) -
+                        position.x;
                 }
             }
 
             if (position.x - startingOffset >
-                _currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize)
+                _currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize + 1)
             {
                 if (previousOrient == -1)
                 {
                     startingOffset = position.x -
-                                     (_currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize);
+                                     (_currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize + 1);
                 }
             }
         }
+
+        Debug.Log(_currentCameraProfile.BoundsRect.xMin + 2 * _currentCameraProfile.CameraSize - 1);
+        Debug.Log(_currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize + 1);
 
         if (changeOrientTimer <= _currentCameraProfile.FollowOffset.followOffsetDamping)
         {
