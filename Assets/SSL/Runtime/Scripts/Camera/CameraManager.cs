@@ -94,9 +94,7 @@ public class CameraManager : MonoBehaviour
             }
         }
 
-        Debug.Log(_currentCameraProfile.BoundsRect.xMin + 2 * _currentCameraProfile.CameraSize - 1);
-        Debug.Log(_currentCameraProfile.BoundsRect.xMax - 2 * _currentCameraProfile.CameraSize + 1);
-
+ 
         if (changeOrientTimer <= _currentCameraProfile.FollowOffset.followOffsetDamping)
         {
             float percent = changeOrientTimer / _currentCameraProfile.FollowOffset.followOffsetDamping;

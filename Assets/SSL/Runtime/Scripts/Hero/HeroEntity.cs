@@ -139,7 +139,7 @@ public class HeroEntity : MonoBehaviour
 
     private void ClampFallSpeedWhenSliding()
     {
-        if (isSliding)
+        if ((IsTouchingWallRight && _moveDirX == 1) || (IsTouchingWallLeft && _moveDirX == -1))
         {
             _verticalSpeed = Mathf.Clamp(_verticalSpeed, -2f, _verticalSpeed);
         }
