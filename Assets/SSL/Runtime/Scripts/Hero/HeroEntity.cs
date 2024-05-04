@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -20,10 +21,21 @@ public class HeroEntity : MonoBehaviour
     [Header("Ground")] [SerializeField] private GroundDetector _groundDetector;
     public bool IsTouchingGround { get; private set; } = false;
 
+    [Header("Ceiling")] [SerializeField] private CeilingDetector _ceilingDetector;
+    public bool IsTouchingCeiling { get; private set; } = false;
+
+    public bool IsTouchingCeilingCenter { get; private set; } = false;
+
+    public bool isFixingCeiling = false;
+
     [Header("Wall")] [SerializeField] private WallDetector _wallDetector;
     public bool IsTouchingWallLeft { get; private set; } = false;
 
     public bool IsTouchingWallRight { get; private set; } = false;
+
+    private bool IsTouchingWallCenterLeft = false;
+
+    private bool IsTouchingWallCenterRight = false;
 
     public bool wasTouchingWall = false;
 
@@ -54,6 +66,8 @@ public class HeroEntity : MonoBehaviour
 
     public bool isSliding => isSlidingLeft() || isSlidingRight() || _slideTimer < slidingCooldown;
     public float _slideTimer = 0f;
+    private float _timeSinceSlideStart = 0f;
+    private bool wasSliding = false;
 
     [SerializeField] private float slidingCooldown = 0.2f;
 
@@ -114,12 +128,12 @@ public class HeroEntity : MonoBehaviour
 
     private bool isSlidingLeft()
     {
-        return (IsTouchingWallLeft && _moveDirX == -1 && !IsTouchingGround);
+        return IsTouchingWallLeft && !IsTouchingGround && (_moveDirX == -1 || _jumpState == JumpState.WallJump);
     }
 
     private bool isSlidingRight()
     {
-        return (IsTouchingWallRight && _moveDirX == 1 && !IsTouchingGround);
+        return IsTouchingWallRight && !IsTouchingGround && (_moveDirX == 1 || _jumpState == JumpState.WallJump);
     }
 
     private void changeOrientIfSliding()
@@ -127,11 +141,19 @@ public class HeroEntity : MonoBehaviour
         if (isSlidingLeft())
         {
             _orientX = 1f;
+            if (!IsTouchingWallCenterLeft)
+            {
+                _slideTimer = slidingCooldown;
+            }
         }
 
         if (isSlidingRight())
         {
             _orientX = -1f;
+            if (!IsTouchingWallCenterRight)
+            {
+                _slideTimer = slidingCooldown;
+            }
         }
 
         if (_jumpState != JumpState.WallJump) _ResetHorizontalSpeed();
@@ -151,7 +173,15 @@ public class HeroEntity : MonoBehaviour
         ClampFallSpeedWhenSliding();
         if ((!IsTouchingWallRight && _moveDirX == 1) || (!IsTouchingWallLeft && _moveDirX == -1))
         {
-            _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 1.3f;
+            if (_timeSinceSlideStart < 0.3f)
+            {
+                _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 1.3f;
+                _slideTimer = slidingCooldown;
+            }
+            else
+            {
+                _horizontalSpeed = _airHorizontalMovementSettings.speedMax / 3f;
+            }
         }
     }
 
@@ -389,10 +419,51 @@ public class HeroEntity : MonoBehaviour
         }
     }
 
+    private IEnumerator fixCeiling()
+    {
+        float i = 1;
+        _verticalSpeed = 0;
+        isFixingCeiling = true;
+        while (IsTouchingCeiling)
+        {
+            _jumpState = JumpState.Falling;
+            i += Time.deltaTime * 2;
+            _verticalSpeed -= i;
+            yield return new WaitForFixedUpdate();
+        }
+
+        isFixingCeiling = false;
+    }
+
+    private void _ApplyCeilingDetection()
+    {
+        IsTouchingCeiling = _ceilingDetector.DetectCeilingNearBy();
+        IsTouchingCeilingCenter = _ceilingDetector.DetectCeilingCenter();
+
+        if (_jumpState == JumpState.WallJump)
+        {
+            IsTouchingCeiling = IsTouchingCeilingCenter;
+        }
+
+        if (IsTouchingCeiling && !isFixingCeiling)
+        {
+            StartCoroutine(fixCeiling());
+        }
+    }
+
     private void _ApplyWallDetection()
     {
         IsTouchingWallLeft = _wallDetector.DetectWallNearByLeft();
         IsTouchingWallRight = _wallDetector.DetectWallNearByRight();
+        IsTouchingWallCenterLeft = _wallDetector.DetectWallCenterLeft();
+        IsTouchingWallCenterRight = _wallDetector.DetectWallCenterRight();
+        /*
+        if (isSliding)
+        {
+            IsTouchingWallLeft = IsTouchingWallCenterLeft;
+            IsTouchingWallRight = IsTouchingWallCenterRight;
+        }
+        */
     }
 
     private void _ResetVerticalSpeed()
@@ -426,6 +497,12 @@ public class HeroEntity : MonoBehaviour
 
     public void enterSlide()
     {
+        if (!wasSliding)
+        {
+            wasSliding = true;
+            _timeSinceSlideStart = 0f;
+        }
+
         if (isSlidingLeft() || isSlidingRight())
         {
             if (_jumpState != JumpState.WallJump)
@@ -437,7 +514,7 @@ public class HeroEntity : MonoBehaviour
 
     private void _ResetSpeedOnWallCollision()
     {
-        if (!isJumping)
+        if (!isJumping || _jumpState == JumpState.Falling)
         {
             if (IsTouchingWallLeft)
             {
@@ -511,7 +588,8 @@ public class HeroEntity : MonoBehaviour
         _UpdateCameraFollowPosition();
         HeroHorizontalMovementSettings horizontalMovementSettings = _GetCurrentHorizontalMovementSettings();
         _timeSinceDash += Time.fixedDeltaTime;
-        _slideTimer += Time.deltaTime;
+        _timeSinceSlideStart += Time.fixedDeltaTime;
+        _slideTimer += Time.fixedDeltaTime;
         if (isDashing)
         {
             _UpdateDash();
@@ -549,17 +627,23 @@ public class HeroEntity : MonoBehaviour
             }
         }
 
-        _ApplyHorizontalSpeed();
-
-        _ApplyVerticalSpeed();
-
-        _ResetSpeedOnWallCollision();
+        _ApplyCeilingDetection();
 
         if (isSliding)
         {
             enterSlide();
             UpdateSlide();
         }
+        else
+        {
+            wasSliding = false;
+        }
+
+        _ApplyHorizontalSpeed();
+
+        _ApplyVerticalSpeed();
+
+        _ResetSpeedOnWallCollision();
     }
 
     private void _ApplyFallGravity(HeroFallSettings settings)

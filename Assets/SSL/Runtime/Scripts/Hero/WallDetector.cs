@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class WallDetector : MonoBehaviour
 {
-    [Header("Detection")]
-    [SerializeField] private Transform[] _detectionPointsLeft;
+    [Header("Detection")] [SerializeField] private Transform[] _detectionPointsLeft;
     [SerializeField] private Transform[] _detectionPointsRight;
     [SerializeField] private float _detectionLength = 0.1f;
     [SerializeField] private LayerMask _groundLayerMask;
@@ -17,6 +16,38 @@ public class WallDetector : MonoBehaviour
         combinedLayerMask = _groundLayerMask | _wallLayerMask;
     }
 
+    public bool DetectWallCenterLeft()
+    {
+        RaycastHit2D hitResult = Physics2D.Raycast(
+            _detectionPointsLeft[2].position,
+            Vector2.left,
+            _detectionLength,
+            combinedLayerMask
+        );
+        if (hitResult.collider != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool DetectWallCenterRight()
+    {
+        RaycastHit2D hitResult = Physics2D.Raycast(
+            _detectionPointsRight[2].position,
+            Vector2.right,
+            _detectionLength,
+            combinedLayerMask
+        );
+        if (hitResult.collider != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public bool DetectWallNearByLeft()
     {
         foreach (Transform detectionPoint in _detectionPointsLeft)
@@ -26,12 +57,13 @@ public class WallDetector : MonoBehaviour
                 Vector2.left,
                 _detectionLength,
                 combinedLayerMask
-                );
+            );
             if (hitResult.collider != null)
             {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -44,12 +76,13 @@ public class WallDetector : MonoBehaviour
                 Vector2.right,
                 _detectionLength,
                 combinedLayerMask
-                );
+            );
             if (hitResult.collider != null)
             {
                 return true;
             }
         }
+
         return false;
     }
 }
